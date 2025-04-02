@@ -1,4 +1,4 @@
-import { Locator, Page, test } from '@fixtures/fixtures';
+import { Locator, Page, expect, test } from '@fixtures/fixtures';
 import { login } from '@constants/endpoints.constants.json';
 import BasePage from './base.page';
 
@@ -34,5 +34,9 @@ export default class LoginPage extends BasePage {
         if (username !== undefined) await this.inputUsername.fill(username);
         if (password !== undefined) await this.inputPassword.fill(password);
         await this.btnLogin.click();
+    }
+
+    async expectErrorMessage(errorText): Promise<void> {
+        await expect(this.labelError).toHaveText(errorText);;
     }
 }

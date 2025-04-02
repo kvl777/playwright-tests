@@ -1,6 +1,8 @@
 import { expect, test } from '@fixtures/fixtures';
 import LoginPage from '@pages/login.page';
 import InventoryPage from '@pages/inventory.page';
+import errorText from 'constants/errors.constants.json';
+
 
 /*
 Flow: Login
@@ -19,11 +21,22 @@ let inventoryPage: InventoryPage;
 test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
     inventoryPage = new InventoryPage(page);
+    await loginPage.open();
 });
 
-test.describe('Login', () => {
+test.describe('Invalid login', () => {
+    test('Login with empty Username (without fixtures)', { tag: '@002' }, async ({}) => {
+        await loginPage.login({ username: process.env.INVALID_USERNAME_0, password: process.env.LOGIN_PASSWORD });
+        await loginPage.expectErrorMessage(errorText.usernameRequired);
+    });
+    test('Login with invalid Username no space (without fixtures)', { tag: '@002' }, async ({}) => {
+        await loginPage.login({ username: process.env.INVALID_USERNAME_1, password: process.env.LOGIN_PASSWORD });
+        await loginPage.expectErrorMessage(errorText.invalidCredentials);
+    });
+});
+
+test.describe('Valid login', () => {
     test('Login with valid credentials (without fixtures)', { tag: '@002' }, async ({}) => {
-        await loginPage.open();
         await loginPage.login({ username: process.env.LOGIN_USERNAME, password: process.env.LOGIN_PASSWORD });
         await expect(inventoryPage.btnExtendSidebarMenu).toBeVisible();
     });

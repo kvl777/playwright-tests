@@ -17,6 +17,12 @@ test.describe('Login', () => {
     // test.afterEach(async ({}) => {});
     // test.afterAll(async ({}) => {});
 
+    test('Login with invalid credentials (fixtures)', { tag: '@001' }, async ({ loginPage, inventoryPage }) => {
+        await loginPage.open();
+        await loginPage.login({ username: process.env.INVALID_USERNAME_1, password: process.env.LOGIN_PASSWORD });
+        await expect(loginPage.labelError).toHaveText(errorMessage);
+    });
+
     test('Login with valid credentials (fixtures)', { tag: '@001' }, async ({ loginPage, inventoryPage }) => {
         await loginPage.open();
         await loginPage.login({ username: process.env.LOGIN_USERNAME, password: process.env.LOGIN_PASSWORD });
