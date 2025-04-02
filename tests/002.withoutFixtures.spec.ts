@@ -24,14 +24,21 @@ test.beforeEach(async ({ page }) => {
     await loginPage.open();
 });
 
-test.describe('Invalid login', () => {
+test.describe('Invalid Username', () => {
     test('Login with empty Username (without fixtures)', { tag: '@002' }, async ({}) => {
-        await loginPage.login({ username: process.env.INVALID_USERNAME_0, password: process.env.LOGIN_PASSWORD });
-        await loginPage.expectErrorMessage(errorText.usernameRequired);
+        checkInvalidCreds(process.env.INVALID_USERNAME_0, process.env.VALID_PASSWORD, errorText.usernameRequired);
     });
-    test('Login with invalid Username no space (without fixtures)', { tag: '@002' }, async ({}) => {
-        await loginPage.login({ username: process.env.INVALID_USERNAME_1, password: process.env.LOGIN_PASSWORD });
-        await loginPage.expectErrorMessage(errorText.invalidCredentials);
+    test('Login with invalid Username one word (without fixtures)', { tag: '@002' }, async ({}) => {
+        checkInvalidCreds(process.env.INVALID_USERNAME_1, process.env.VALID_PASSWORD, errorText.invalidCredentials);
+    });
+    test('Login with invalid Username with space (without fixtures)', { tag: '@002' }, async ({}) => {
+        checkInvalidCreds(process.env.INVALID_USERNAME_2, process.env.VALID_PASSWORD, errorText.invalidCredentials);
+    });
+    test('Login with invalid Username with dash (without fixtures)', { tag: '@002' }, async ({}) => {
+        checkInvalidCreds(process.env.INVALID_USERNAME_3, process.env.VALID_PASSWORD, errorText.invalidCredentials);
+    });
+    test('Login with invalid Username with uppercase (without fixtures)', { tag: '@002' }, async ({}) => {
+        checkInvalidCreds(process.env.INVALID_USERNAME_4, process.env.VALID_PASSWORD, errorText.invalidCredentials);
     });
 });
 
@@ -41,3 +48,8 @@ test.describe('Valid login', () => {
         await expect(inventoryPage.btnExtendSidebarMenu).toBeVisible();
     });
 });
+
+async function checkInvalidCreds (testUsername: string, testPassword: string, errorMessage: string) {
+    await loginPage.login({ username: testUsername, password: testPassword });
+    await loginPage.expectErrorMessage(errorMessage);
+}
