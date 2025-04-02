@@ -1,0 +1,46 @@
+name: Test
+on:
+    push:
+        branches: [main]
+    pull_request:
+        branches: [main]
+    repository_dispatch:
+        types: [regression]
+    # schedule:
+    #     - cron: '0 9 * * *'
+    workflow_dispatch:
+
+concurrency: test
+
+env:
+    BASE_URL: ${{ secrets.BASE_URL }}
+    LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
+    LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+
+jobs:
+    test:
+        timeout-minutes: 60
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              name: Instal latest Node
+              with:
+                  node-version: lts/*
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Install Playwright Browsers
+              run: npx playwright install --with-deps
+
+            - name: Run tests
+              continue-on-error: true
+              run: npm run tests
+
+            - name: Deploy report to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_branch: reports
+                  publish_dir: reports/html
