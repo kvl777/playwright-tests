@@ -37,6 +37,6 @@ export default class LoginPage extends BasePage {
     }
 
     async expectErrorMessage(errorText): Promise<void> {
-        await expect(this.labelError).toHaveText(errorText);;
+        await expect(this.labelError).toHaveText(errorText);
     }
 }
